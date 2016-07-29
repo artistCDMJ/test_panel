@@ -17,6 +17,7 @@ class ReprojectMask(bpy.types.Operator):
         bpy.ops.object.editmode_toggle() #toggle edit mode
         bpy.ops.uv.project_from_view(camera_bounds=True, correct_aspect=False, scale_to_bounds=False) #project from view
         bpy.ops.object.editmode_toggle() #toggle back from edit mode
+        bpy.ops.object.convert(target='MESH')#in obj mode, convert to mesh for correction on Artist Panel Vector Masks/Gpencil Masks
         bpy.ops.paint.texture_paint_toggle() #toggle texpaint
         return {'FINISHED'}
     

@@ -2,7 +2,7 @@ import bpy
 
 class ReprojectMask(bpy.types.Operator):
     """Reproject Mask"""
-    bl_idname = "object.reproject_mask" 
+    bl_idname = "artist_paint.reproject_mask" 
                                      
      
     bl_label = "Reproject Mask by View"
@@ -18,13 +18,14 @@ class ReprojectMask(bpy.types.Operator):
         bpy.ops.uv.project_from_view(camera_bounds=True, correct_aspect=False, scale_to_bounds=False) #project from view
         bpy.ops.object.editmode_toggle() #toggle back from edit mode
         bpy.ops.object.convert(target='MESH')#in obj mode, convert to mesh for correction on Artist Panel Vector Masks/Gpencil Masks
+
         bpy.ops.paint.texture_paint_toggle() #toggle texpaint
         return {'FINISHED'}
     
 #next operator
 class SolidfyDifference(bpy.types.Operator):
     """Solidify and Difference Mask"""
-    bl_idname = "object.solidfy_difference"
+    bl_idname = "artist_paint.solidfy_difference"
     bl_label = "Add Solidy and Difference Bool"
     bl_options = { 'REGISTER','UNDO' }
     
@@ -39,7 +40,7 @@ class SolidfyDifference(bpy.types.Operator):
         for obj in sel:
             context.scene.objects.active = obj#set active to selected
             bpy.ops.object.editmode_toggle()
-            bpy.ops.mesh.dissolve_faces()
+            bpy.ops.mesh.dissolve_faces()#to get a clean single face for paint projection
             bpy.ops.object.editmode_toggle()
 
             bpy.ops.object.modifier_add(type='SOLIDIFY')#set soldifiy for bool
@@ -69,7 +70,7 @@ class SolidfyDifference(bpy.types.Operator):
 #next operator
 class SolidfyUnion(bpy.types.Operator):
     """Solidify and Union Mask"""
-    bl_idname = "object.solidfy_union"
+    bl_idname = "artist_paint.solidfy_union"
     bl_label = "Add Solidy and Union Bool"
     bl_options = { 'REGISTER','UNDO' }
     
@@ -85,7 +86,7 @@ class SolidfyUnion(bpy.types.Operator):
             context.scene.objects.active = obj#set active to selected
             
             bpy.ops.object.editmode_toggle()
-            bpy.ops.mesh.dissolve_faces()
+            bpy.ops.mesh.dissolve_faces()#to get a single face for paint projection
             bpy.ops.object.editmode_toggle()
             
             bpy.ops.object.modifier_add(type='SOLIDIFY')#set soldifiy for bool
@@ -116,7 +117,7 @@ class SolidfyUnion(bpy.types.Operator):
 #next operator
 class RemoveMods(bpy.types.Operator):
     """Remove Modifiers"""
-    bl_idname = "object.remove_modifiers"
+    bl_idname = "artist_paint.remove_modifiers"
     bl_label = "Remove Modifiers"
     bl_options = { 'REGISTER','UNDO' }
     
@@ -145,13 +146,145 @@ class RemoveMods(bpy.types.Operator):
 
         # remove the old mesh from the .blend
         bpy.data.meshes.remove(old_mesh)
-        bpy.context.object.draw_type = 'SOLID'
+        bpy.context.object.draw_type = 'TEXTURED'
 
         
                 
             
         return {'FINISHED'}
 
+class GenericOper(bpy.types.Operator):
+    """Generic Operator"""
+    bl_idname = "object.generic_operator" 
+                                     
+     
+    bl_label = "Generic Operator Template"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.paint.texture_paint_toggle() #toggle texpaint
+        
+        return {'FINISHED'}
+
+class AlignLeft(bpy.types.Operator):
+    """Left Align"""
+    bl_idname = "object.align_left" 
+                                     
+     
+    bl_label = "Align Objects Left"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
+        
+        return {'FINISHED'}
+    
+class AlignCenter(bpy.types.Operator):
+    """Center Align"""
+    bl_idname = "object.align_center" 
+                                     
+     
+    bl_label = "Align Objects Center"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
+        
+        return {'FINISHED'}
+
+class AlignRight(bpy.types.Operator):
+    """Center Align"""
+    bl_idname = "object.align_right" 
+                                     
+     
+    bl_label = "Align Objects Right"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
+        
+        return {'FINISHED'}
+    
+class AlignTop(bpy.types.Operator):
+    """Top Align"""
+    bl_idname = "object.align_top" 
+                                     
+     
+    bl_label = "Align Objects Top"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'Y'}) 
+        
+        return {'FINISHED'}
+    
+class AlignHcenter(bpy.types.Operator):
+    """Horizontal Center Align"""
+    bl_idname = "object.align_hcenter" 
+                                     
+     
+    bl_label = "Align Objects Horizontal Center"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'Y'}) 
+        
+        return {'FINISHED'}
+    
+class AlignBottom(bpy.types.Operator):
+    """Horizontal Bottom Align"""
+    bl_idname = "object.align_bottom" 
+                                     
+     
+    bl_label = "Align Objects Horizontal Bottom"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'Y'}) 
+        
+        return {'FINISHED'}
 
 
 
@@ -170,16 +303,84 @@ class TestPanel(bpy.types.Panel):
         
         row = layout.row()
         
-        row.label(text="Test Panel")
+        row.label(text="Mask Bool Ops")
+        row = layout.row()
+        row.operator("artist_paint.solidfy_difference", text = "Solidify Diff", icon = 'ROTACTIVE')
+        row = layout.row()
+        row.operator("artist_paint.solidfy_union", text = "Solidify Union", icon = 'ROTATECOLLECTION')
+        row = layout.row()
+        row.operator("artist_paint.reproject_mask", text = "Reproject Mask", icon = 'NODE_SEL')
         
         row = layout.row()
-        row.operator("object.reproject_mask", text = "Reproject Mask", icon = 'NODE_SEL')
+        row.operator("artist_paint.remove_modifiers", text = "Remove Modifiers", icon = 'RECOVER_LAST')  
+        
+        ########generic example#####
         row = layout.row()
-        row.operator("object.solidfy_difference", text = "Solidify Diff", icon = 'ROTACTIVE')
+        
+        row.label(text="Generic Operator")
         row = layout.row()
-        row.operator("object.solidfy_union", text = "Solidify Union", icon = 'ROTATECOLLECTION')
+        row.operator("object.align_left", text = "Generic Operator", icon = 'BLENDER')  
+        
+        box = layout.box()                        #BOOL MASK AND REUSE
+        col = box.column(align = True)
+        row = col.row(align = True)
+        row1 = row.split(align=True)
+        row1.label(text="Bool")
+        row1.scale_x = 0.50
+        row.separator()
+        row2 = row.split(align=True)
+        row2.operator("artist_paint.solidfy_difference", text="Difference", icon = 'ROTACTIVE')
+        row2.operator("artist_paint.solidfy_union", text="Union", icon = 'ROTATECOLLECTION')
+        row2.scale_x = 1.00
+        row.separator()
+        row3 = row.split(align=True)
+        row3.operator("artist_paint.reproject_mask",
+                    text="Reproject", icon = 'NODE_SEL')
+        row4 = row.split(align=True)
+        row4.operator("artist_paint.remove_modifiers",
+                    text="", icon='RECOVER_LAST')
+                    
         row = layout.row()
-        row.operator("object.remove_modifiers", text = "Remove Modifiers", icon = 'RECOVER_LAST')    
+        
+        row.label(text="ALIGN PRESETS")
+        box = layout.box()                        #VERTICAL ALIGN
+        col = box.column(align = True)
+        row = col.row(align = True)
+        row1 = row.split(align=True)
+        row1.label(text="VERTICAL")
+        row1.scale_x = 0.50
+        row.separator()
+        row2 = row.split(align=False)
+        row2.operator("object.align_left", text="Left", icon = 'LOOP_BACK')
+        
+        row2.operator("object.align_center", text="Center", icon = 'PAUSE')
+        row2.scale_x = 1.00
+        row.separator()
+        row3 = row.split(align=True)
+        row3.operator("object.align_right",
+                    text="Right", icon = 'LOOP_FORWARDS')
+        #row4 = row.split(align=True)
+        #row4.operator("artist_paint.remove_modifiers",
+                    #text="", icon='RECOVER_LAST')
+        
+        box = layout.box()                        #HORIZONTAL ALIGN
+        col = box.column(align = True)
+        row = col.row(align = True)
+        row1 = row.split(align=True)
+        row1.label(text="HORIZONTAL")
+        row1.scale_x = 0.50
+        row.separator()
+        row2 = row.split(align=False)
+        row2.operator("object.align_top", text="Top", icon = 'TRIA_UP')
+        
+        row2.operator("object.align_hcenter", text="Horizon", icon = 'GRIP')
+        row2.scale_x = 1.00
+        row.separator()
+        row3 = row.split(align=True)
+        row3.operator("object.align_bottom",
+                    text="Bottom", icon = 'TRIA_DOWN')
+                    
+        
 
 
 
@@ -190,6 +391,13 @@ def register():
     bpy.utils.register_class(SolidfyDifference)
     bpy.utils.register_class(SolidfyUnion)
     bpy.utils.register_class(RemoveMods)
+    bpy.utils.register_class(GenericOper)
+    bpy.utils.register_class(AlignLeft)
+    bpy.utils.register_class(AlignCenter)
+    bpy.utils.register_class(AlignRight)
+    bpy.utils.register_class(AlignTop)
+    bpy.utils.register_class(AlignHcenter)
+    bpy.utils.register_class(AlignBottom)
     bpy.utils.register_class(TestPanel)
     
 def unregister():
@@ -197,10 +405,16 @@ def unregister():
     bpy.utils.unregister_class(SolidfyDifference)
     bpy.utils.unregister_class(SolidfyUnion)
     bpy.utils.unregister_class(RemoveMods)
+    bpy.utils.unregister_class(GenericOper)
+    bpy.utils.unregister_class(AlignLeft)
+    bpy.utils.unregister_class(AlignCenter)
+    bpy.utils.unregister_class(AlignRight)
+    bpy.utils.unregister_class(AlignTop)
+    bpy.utils.unregister_class(AlignHcenter)
+    bpy.utils.unregister_class(AlignBottom)
     bpy.utils.unregister_class(TestPanel)
     
     
        
 if __name__ == "__main__":
     register()
-

@@ -403,9 +403,9 @@ class TestPanel(bpy.types.Panel):
         row2.operator("object.sculpt_camera", text = "Sculpt Ref View", icon = 'RENDER_REGION')
         row2.scale_x = 1.00
         row3 = row.split(align=True)
-        if context.space_data.lock_camera == 'True':
+        if context.space_data.lock_camera == True:
             row3.operator("object.lock_screen", text="", icon='LOCKED')
-        else:
+        if context.space_data.lock_camera == False:
             row3.operator("object.lock_screen", text="", icon='UNLOCKED')
         
         

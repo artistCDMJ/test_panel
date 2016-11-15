@@ -286,6 +286,76 @@ class AlignBottom(bpy.types.Operator):
         
         return {'FINISHED'}
 
+class SculptView(bpy.types.Operator):
+    """Sculpt View Reference Camera"""
+    bl_idname = "object.sculpt_camera" 
+                                     
+     
+    bl_label = "Sculpt Camera"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.camera_add(
+                    view_align=False,
+                    enter_editmode=False,
+                    location=(0, -4, 0),
+                    rotation=(1.5708, 0, 0)
+                    )
+
+        context.object.name="Reference Cam" #add camera to front view
+        
+        bpy.context.object.data.show_passepartout = False
+
+        #change to camera view
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view3d.viewnumpad(override, type = 'CAMERA')
+                break # this will break the loop after the first ran
+            
+#            
+        #bpy.ops.view3d.background_image_add()#ADD IMAGE TO BACKGROUND
+        
+        #bpy.context.space_data.show_background_images = True 
+        
+        bpy.context.scene.render.resolution_x = 1920
+        bpy.context.scene.render.resolution_y = 1080
+        
+        
+    
+        
+        return {'FINISHED'}
+
+class ToggleLock(bpy.types.Operator):
+    """Lock Screen"""
+    bl_idname = "object.lock_screen" 
+                                     
+     
+    bl_label = "Lock Screen Toggle"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+    
+        A = context.space_data.lock_camera
+        B = context.space_data.show_only_render
+        if A and B == True:
+            context.space_data.lock_camera = False
+            context.space_data.show_only_render = False
+        else:
+            context.space_data.lock_camera = True
+            context.space_data.show_only_render = True
+        return {'FINISHED'}
+
+        
+
+#bpy.context.space_data.show_only_render = True
 
 
         
@@ -319,7 +389,26 @@ class TestPanel(bpy.types.Panel):
         
         row.label(text="Generic Operator")
         row = layout.row()
-        row.operator("object.align_left", text = "Generic Operator", icon = 'BLENDER')  
+        row.operator("object.generic_operator", text = "Generic Operator", icon = 'BLENDER')  
+        
+        ########sculpt camera and lock toggle#####
+        box = layout.box()                        #BOOL MASK AND REUSE
+        col = box.column(align = True)
+        row = col.row(align = True)
+        row1 = row.split(align=True)
+        row1.label(text="Sculpt View")
+        row1.scale_x = 0.50
+        row.separator()
+        row2 = row.split(align=True)
+        row2.operator("object.sculpt_camera", text = "Sculpt Ref View", icon = 'RENDER_REGION')
+        row2.scale_x = 1.00
+        row3 = row.split(align=True)
+        if context.space_data.lock_camera == 'True':
+            row3.operator("object.lock_screen", text="", icon='LOCKED')
+        else:
+            row3.operator("object.lock_screen", text="", icon='UNLOCKED')
+        
+        
         
         box = layout.box()                        #BOOL MASK AND REUSE
         col = box.column(align = True)
@@ -398,6 +487,8 @@ def register():
     bpy.utils.register_class(AlignTop)
     bpy.utils.register_class(AlignHcenter)
     bpy.utils.register_class(AlignBottom)
+    bpy.utils.register_class(SculptView)
+    bpy.utils.register_class(ToggleLock)
     bpy.utils.register_class(TestPanel)
     
 def unregister():
@@ -412,9 +503,12 @@ def unregister():
     bpy.utils.unregister_class(AlignTop)
     bpy.utils.unregister_class(AlignHcenter)
     bpy.utils.unregister_class(AlignBottom)
+    bpy.utils.unregister_class(SculptView)
+    bpy.utils.unregister_class(ToggleLock)
     bpy.utils.unregister_class(TestPanel)
     
     
        
 if __name__ == "__main__":
     register()
+

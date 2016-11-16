@@ -355,6 +355,27 @@ class ToggleLock(bpy.types.Operator):
             context.space_data.show_only_render = True
         return {'FINISHED'}
 
+class CustomFps(bpy.types.Operator):
+    """Slow Play FPS"""
+    bl_idname = "object.slow_play"
+    
+    bl_label = "Slow Play FPS"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+        #bpy.context.scene.render.fps = 1
+        #bpy.context.scene.render.fps_base = 12
+        F = context.scene.render.fps
+        if F == 1:
+            context.scene.render.fps = 30
+            context.scene.render.fps_base = 1
+        else:
+             bpy.context.scene.render.fps = 1
+             bpy.context.scene.render.fps_base = 12 
+               
+        return {'FINISHED'}
+
+
         
 
 #bpy.context.space_data.show_only_render = True
@@ -394,7 +415,7 @@ class TestPanel(bpy.types.Panel):
         row.operator("object.generic_operator", text = "Generic Operator", icon = 'BLENDER')  
         
         ########sculpt camera and lock toggle#####
-        box = layout.box()                        #BOOL MASK AND REUSE
+        box = layout.box()                        
         col = box.column(align = True)
         row = col.row(align = True)
         row1 = row.split(align=True)
@@ -409,6 +430,11 @@ class TestPanel(bpy.types.Panel):
             row3.operator("object.lock_screen", text="", icon='LOCKED')
         if context.space_data.lock_camera == False:
             row3.operator("object.lock_screen", text="", icon='UNLOCKED')
+        row4 = row.split(align=True)
+        if context.scene.render.fps > 1:
+            row4.operator("object.slow_play", text="", icon='CLIP')
+        if context.scene.render.fps == 1:
+            row4.operator("object.slow_play", text="", icon='CAMERA_DATA')
         
         
         
@@ -491,6 +517,7 @@ def register():
     bpy.utils.register_class(AlignBottom)
     bpy.utils.register_class(SculptView)
     bpy.utils.register_class(ToggleLock)
+    bpy.utils.register_class(CustomFps)
     bpy.utils.register_class(TestPanel)
     
 def unregister():
@@ -507,6 +534,7 @@ def unregister():
     bpy.utils.unregister_class(AlignBottom)
     bpy.utils.unregister_class(SculptView)
     bpy.utils.unregister_class(ToggleLock)
+    bpy.utils.unregister_class(CustomFps)
     bpy.utils.unregister_class(TestPanel)
     
     

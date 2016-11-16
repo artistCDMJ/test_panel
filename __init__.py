@@ -311,6 +311,8 @@ class SculptView(bpy.types.Operator):
         context.object.name="Reference Cam" #add camera to front view
         
         bpy.context.object.data.show_passepartout = False
+        bpy.context.object.data.lens = 80
+
 
         #change to camera view
         for area in bpy.context.screen.areas:
@@ -511,4 +513,3 @@ def unregister():
        
 if __name__ == "__main__":
     register()
-

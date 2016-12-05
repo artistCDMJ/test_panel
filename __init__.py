@@ -377,9 +377,43 @@ class CustomFps(bpy.types.Operator):
 
 
         
+class SelectVertgroup(bpy.types.Operator):
+    """Select Vertgroup"""
+    bl_idname = "object.select_vgroup" 
+                                     
+     
+    bl_label = "Select VGroup"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+    
+        bpy.ops.object.editmode_toggle()#toggle editmode
+        bpy.ops.object.vertex_group_select()#select current active vgroup
+        bpy.ops.object.editmode_toggle()#toggle editmode
+        bpy.ops.paint.texture_paint_toggle()#Texpaint
+        bpy.context.object.data.use_paint_mask = True #set face select masking on in case we forgot
 
-#bpy.context.space_data.show_only_render = True
 
+        return {'FINISHED'}
+
+class DeselectVertgroup(bpy.types.Operator):
+    """Deselect Vertgroup"""
+    bl_idname = "object.deselect_vgroup" 
+                                     
+     
+    bl_label = "Deselect VGroup"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+    
+        bpy.ops.object.editmode_toggle()#toggle editmode
+        bpy.ops.object.vertex_group_deselect()#select current active vgroup
+        bpy.ops.object.editmode_toggle()#toggle editmode
+        bpy.ops.paint.texture_paint_toggle()#Texpaint
+        bpy.context.object.data.use_paint_mask = True #set face select masking on in case we forgot
+
+
+        return {'FINISHED'}
 
         
     
@@ -532,6 +566,11 @@ class TestPanel(bpy.types.Panel):
             sub.operator("object.vertex_group_deselect", text="Deselect")
 
             layout.prop(context.tool_settings, "vertex_group_weight", text="Weight")
+            
+        row = layout.row()
+        row.operator("object.select_vgroup", text = "Select VGroup", icon = 'ROTACTIVE')
+        row = layout.row()
+        row.operator("object.deselect_vgroup", text = "Deselect VGroup", icon = 'ROTACTIVE')
                     
         
 
@@ -555,6 +594,8 @@ def register():
     bpy.utils.register_class(ToggleLock)
     bpy.utils.register_class(CustomFps)
     bpy.utils.register_class(TestPanel)
+    bpy.utils.register_class(SelectVertgroup)
+    bpy.utils.register_class(DeselectVertgroup)
     
 def unregister():
     bpy.utils.unregister_class(ReprojectMask)
@@ -572,6 +613,8 @@ def unregister():
     bpy.utils.unregister_class(ToggleLock)
     bpy.utils.unregister_class(CustomFps)
     bpy.utils.unregister_class(TestPanel)
+    bpy.utils.unregister_class(SelectVertgroup)
+    bpy.utils.unregister_class(DeselectVertgroup)
     
     
        

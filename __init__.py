@@ -414,6 +414,67 @@ class DeselectVertgroup(bpy.types.Operator):
 
 
         return {'FINISHED'}
+    
+class SculptDuplicate(bpy.types.Operator):
+    """Sculpt Liquid Duplicate"""
+    bl_idname = "artist_paint.sculpt_duplicate"
+ 
+ 
+    bl_label = "Sculpt Liquid Duplicate"
+    bl_options = { 'REGISTER', 'UNDO' }
+ 
+    def execute(self, context):
+ 
+        scene = context.scene
+ 
+ 
+        #new code
+        bpy.ops.paint.texture_paint_toggle()
+        bpy.ops.object.duplicate_move(OBJECT_OT_duplicate={"linked":False, "mode":'TRANSLATION'}, TRANSFORM_OT_translate={"value":(0, 0, 0), "constraint_axis":(False, False, False), "constraint_orientation":'GLOBAL', "mirror":False, "proportional":'DISABLED', "proportional_edit_falloff":'SMOOTH', "proportional_size":1, "snap":False, "snap_target":'CLOSEST', "snap_point":(0, 0, 0), "snap_align":False, "snap_normal":(0, 0, 0), "gpencil_strokes":False, "texture_space":False, "remove_on_cancel":False, "release_confirm":False})
+        bpy.ops.transform.translate(value=(0, 0, 0.1), constraint_axis=(False, False, True), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        bpy.context.object.active_material.use_shadeless = True
+        bpy.context.object.active_material.use_transparency = True
+        bpy.context.object.active_material.transparency_method = 'Z_TRANSPARENCY'
+        bpy.ops.paint.texture_paint_toggle()
+        
+        
+        #make individual
+        sel = bpy.context.selected_objects
+        for ob in sel:
+            mat = ob.active_material
+            if mat:
+                ob.active_material = mat.copy()
+        
+                for ts in mat.texture_slots:
+                    try:
+                        ts.texture = ts.texture.copy()
+                
+                        if ts.texture.image:
+                            ts.texture.image = ts.texture.image.copy() 
+                    except:
+                        pass     
+
+        
+ 
+        return {'FINISHED'}
+
+
+    """sel = bpy.context.selected_objects
+for ob in sel:
+    mat = ob.active_material
+    if mat:
+        ob.active_material = mat.copy()
+        
+        for ts in mat.texture_slots:
+            try:
+                ts.texture = ts.texture.copy()
+                
+                if ts.texture.image:
+                    ts.texture.image = ts.texture.image.copy() 
+            except:
+                pass"""
+
+    
 class SculptLiquid(bpy.types.Operator):
     """Sculpt Liquid"""
     bl_idname = "artist_paint.sculpt_liquid"
@@ -434,10 +495,7 @@ class SculptLiquid(bpy.types.Operator):
         bpy.ops.mesh.subdivide(number_cuts=2, smoothness=0)
         bpy.ops.sculpt.sculptmode_toggle()
         bpy.context.scene.tool_settings.sculpt.use_symmetry_x = False
-
-
-
-
+        
         return {'FINISHED'}
 
         
@@ -473,6 +531,7 @@ class TestPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("object.generic_operator", text = "Generic Operator", icon = 'BLENDER')
         row = layout.row()
+        row.operator("artist_paint.sculpt_duplicate", text = "Sculpt Duplicate", icon = 'BLENDER')
         row.operator("artist_paint.sculpt_liquid", text = "Sculpt Liquid", icon = 'BLENDER')  
         
         ########sculpt camera and lock toggle#####
@@ -624,6 +683,7 @@ def register():
     bpy.utils.register_class(SelectVertgroup)
     bpy.utils.register_class(DeselectVertgroup)
     bpy.utils.register_class(SculptLiquid)
+    bpy.utils.register_class(SculptDuplicate)
     
 def unregister():
     bpy.utils.unregister_class(ReprojectMask)
@@ -644,6 +704,7 @@ def unregister():
     bpy.utils.unregister_class(SelectVertgroup)
     bpy.utils.unregister_class(DeselectVertgroup)
     bpy.utils.unregister_class(SculptLiquid)
+    bpy.utils.unregister_class(SculptDuplicate)
     
     
        

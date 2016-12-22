@@ -414,6 +414,31 @@ class DeselectVertgroup(bpy.types.Operator):
 
 
         return {'FINISHED'}
+class SculptLiquid(bpy.types.Operator):
+    """Sculpt Liquid"""
+    bl_idname = "artist_paint.sculpt_liquid"
+
+
+    bl_label = "Sculpt like Liquid"
+    bl_options = { 'REGISTER', 'UNDO' }
+
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        bpy.ops.paint.texture_paint_toggle()
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.mesh.subdivide(number_cuts=100, smoothness=0)
+        bpy.ops.mesh.subdivide(number_cuts=2, smoothness=0)
+        bpy.ops.sculpt.sculptmode_toggle()
+        bpy.context.scene.tool_settings.sculpt.use_symmetry_x = False
+
+
+
+
+        return {'FINISHED'}
 
         
     
@@ -446,7 +471,9 @@ class TestPanel(bpy.types.Panel):
         
         row.label(text="Generic Operator")
         row = layout.row()
-        row.operator("object.generic_operator", text = "Generic Operator", icon = 'BLENDER')  
+        row.operator("object.generic_operator", text = "Generic Operator", icon = 'BLENDER')
+        row = layout.row()
+        row.operator("artist_paint.sculpt_liquid", text = "Sculpt Liquid", icon = 'BLENDER')  
         
         ########sculpt camera and lock toggle#####
         box = layout.box()                        
@@ -596,6 +623,7 @@ def register():
     bpy.utils.register_class(TestPanel)
     bpy.utils.register_class(SelectVertgroup)
     bpy.utils.register_class(DeselectVertgroup)
+    bpy.utils.register_class(SculptLiquid)
     
 def unregister():
     bpy.utils.unregister_class(ReprojectMask)
@@ -615,6 +643,7 @@ def unregister():
     bpy.utils.unregister_class(TestPanel)
     bpy.utils.unregister_class(SelectVertgroup)
     bpy.utils.unregister_class(DeselectVertgroup)
+    bpy.utils.unregister_class(SculptLiquid)
     
     
        
